@@ -1,10 +1,66 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace Calendar
 {
     internal class Program
     {
+        private const int ColumnWidth = 4;
+
+        private static readonly List<DayOfWeek> WeekDays = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday, DayOfWeek.Saturday, DayOfWeek.Sunday, };
+
         private static void Main(string[] args)
+        {
+            var year = GetYear();
+            var month = GetMonth();
+
+            PrintDayNames();
+
+            var firstDayDate = new DateTime(year, month, 1);
+            var firstDayIndex = WeekDays.IndexOf(firstDayDate.DayOfWeek);
+            if (firstDayIndex > 0)
+            {
+                for (var i = 0; i < firstDayIndex; i++)
+                {
+                    Console.Write("".PadLeft(ColumnWidth));
+                }
+            }
+            var lastDayDate = firstDayDate.AddMonths(1).AddDays(-1);
+
+            for (var current = firstDayDate; current <= lastDayDate; current = current.AddDays(1))
+            {
+                Console.Write(current.Day.ToString(CultureInfo.CurrentCulture).PadLeft(ColumnWidth));
+                if (current.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    Console.WriteLine();
+                }
+            }
+            Console.WriteLine();
+        }
+
+        private static void PrintDayNames()
+        {
+            foreach (var dayOfWeek in WeekDays)
+            {
+                Console.Write(dayOfWeek.ToString("G").Substring(0, 2).PadLeft(ColumnWidth));
+            }
+            Console.WriteLine();
+        }
+
+        private static int GetMonth()
+        {
+            int month;
+            string monthStr;
+            do
+            {
+                Console.Write("Введите месяц: ");
+                monthStr = Console.ReadLine();
+            } while (!int.TryParse(monthStr, out month) || month < 1 || month > 12);
+            return month;
+        }
+
+        private static int GetYear()
         {
             int year;
             string yearStr;
@@ -13,14 +69,7 @@ namespace Calendar
                 Console.Write("Введите год: ");
                 yearStr = Console.ReadLine();
             } while (!int.TryParse(yearStr, out year) || year < 1900);
-
-            int month;
-            string monthStr;
-            do
-            {
-                Console.Write("Введите месяц: ");
-                monthStr = Console.ReadLine();
-            } while (!int.TryParse(monthStr, out month) || month < 1 || month > 12);
+            return year;
         }
     }
 }
