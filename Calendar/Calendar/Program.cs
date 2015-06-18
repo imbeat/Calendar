@@ -17,6 +17,48 @@ namespace Calendar
 
             PrintDayNames();
 
+            PrintDayNumbers(year, month);
+        }
+
+        private static int GetYear()
+        {
+            int year;
+            string yearStr;
+            const int minYear = 1900;
+            do
+            {
+                Console.Write("Введите год: ");
+                yearStr = Console.ReadLine();
+            } while (!int.TryParse(yearStr, out year) || year < minYear);
+            return year;
+        }
+
+        private static int GetMonth()
+        {
+            int month;
+            string monthStr;
+            const int minMonthNumber = 1;
+            const int maxMonthNumber = 12;
+            do
+            {
+                Console.Write("Введите месяц: ");
+                monthStr = Console.ReadLine();
+            } while (!int.TryParse(monthStr, out month) || month < minMonthNumber || month > maxMonthNumber);
+            return month;
+        }
+
+        private static void PrintDayNames()
+        {
+            const int dayTitleLength = 2;
+            foreach (var dayOfWeek in WeekDays)
+            {
+                Console.Write(dayOfWeek.ToString("G").Substring(0, dayTitleLength).PadLeft(ColumnWidth));
+            }
+            Console.WriteLine();
+        }
+
+        private static void PrintDayNumbers(int year, int month)
+        {
             var firstDayDate = new DateTime(year, month, 1);
             var lastDayDate = firstDayDate.AddMonths(1).AddDays(-1);
             var firstDayIndex = WeekDays.IndexOf(firstDayDate.DayOfWeek);
@@ -54,39 +96,6 @@ namespace Calendar
                 }
             }
             Console.WriteLine();
-        }
-
-        private static void PrintDayNames()
-        {
-            foreach (var dayOfWeek in WeekDays)
-            {
-                Console.Write(dayOfWeek.ToString("G").Substring(0, 2).PadLeft(ColumnWidth));
-            }
-            Console.WriteLine();
-        }
-
-        private static int GetMonth()
-        {
-            int month;
-            string monthStr;
-            do
-            {
-                Console.Write("Введите месяц: ");
-                monthStr = Console.ReadLine();
-            } while (!int.TryParse(monthStr, out month) || month < 1 || month > 12);
-            return month;
-        }
-
-        private static int GetYear()
-        {
-            int year;
-            string yearStr;
-            do
-            {
-                Console.Write("Введите год: ");
-                yearStr = Console.ReadLine();
-            } while (!int.TryParse(yearStr, out year) || year < 1900);
-            return year;
         }
     }
 }
