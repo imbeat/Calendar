@@ -18,6 +18,7 @@ namespace Calendar
             PrintDayNames();
 
             var firstDayDate = new DateTime(year, month, 1);
+            var lastDayDate = firstDayDate.AddMonths(1).AddDays(-1);
             var firstDayIndex = WeekDays.IndexOf(firstDayDate.DayOfWeek);
             if (firstDayIndex > 0)
             {
@@ -26,11 +27,27 @@ namespace Calendar
                     Console.Write("".PadLeft(ColumnWidth));
                 }
             }
-            var lastDayDate = firstDayDate.AddMonths(1).AddDays(-1);
 
+            var needToAddClosingBrace = false;
             for (var current = firstDayDate; current <= lastDayDate; current = current.AddDays(1))
             {
-                Console.Write(current.Day.ToString(CultureInfo.CurrentCulture).PadLeft(ColumnWidth));
+                if (current.Date != DateTime.Now.Date)
+                {
+                    var paddingSpacesWidth = ColumnWidth;
+                    if (needToAddClosingBrace)
+                    {
+                        paddingSpacesWidth = ColumnWidth - 1;
+                        needToAddClosingBrace = false;
+                    }
+                    Console.Write(current.Day.ToString(CultureInfo.CurrentCulture).PadLeft(paddingSpacesWidth));
+                }
+                else
+                {
+                    Console.Write(("[" + current.Day.ToString(CultureInfo.CurrentCulture)).PadLeft(ColumnWidth));
+                    needToAddClosingBrace = true;
+                    Console.Write("]");
+                }
+
                 if (current.DayOfWeek == DayOfWeek.Sunday)
                 {
                     Console.WriteLine();
