@@ -7,8 +7,15 @@ namespace Calendar
     internal class Program
     {
         private const int ColumnWidth = 4;
-
+        
         private static readonly List<DayOfWeek> WeekDays = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday, DayOfWeek.Saturday, DayOfWeek.Sunday, };
+
+        private static readonly ConsoleColor DefaultConsoleColor;
+
+        static Program()
+        {
+            DefaultConsoleColor = Console.ForegroundColor;
+        }
 
         private static void Main(string[] args)
         {
@@ -50,10 +57,13 @@ namespace Calendar
         private static void PrintDayNames()
         {
             const int dayTitleLength = 2;
+            Console.ForegroundColor = ConsoleColor.Blue;
             foreach (var dayOfWeek in WeekDays)
             {
                 Console.Write(dayOfWeek.ToString("G").Substring(0, dayTitleLength).PadLeft(ColumnWidth));
             }
+
+            Console.ForegroundColor = DefaultConsoleColor;
             Console.WriteLine();
         }
 
@@ -70,23 +80,27 @@ namespace Calendar
                 }
             }
 
-            var needToAddClosingBrace = false;
+            var isTomorrow = false;
             for (var current = firstDayDate; current <= lastDayDate; current = current.AddDays(1))
             {
+                Console.ForegroundColor = GetConsoleForegroundColorByDay(current);
+
                 if (current.Date != DateTime.Now.Date)
                 {
                     var paddingSpacesWidth = ColumnWidth;
-                    if (needToAddClosingBrace)
+                    if (isTomorrow)
                     {
                         paddingSpacesWidth = ColumnWidth - 1;
-                        needToAddClosingBrace = false;
+                        isTomorrow = false;
                     }
                     Console.Write(current.Day.ToString(CultureInfo.CurrentCulture).PadLeft(paddingSpacesWidth));
                 }
                 else
                 {
+                    const ConsoleColor todayColor = ConsoleColor.Red;
+                    Console.ForegroundColor = todayColor;
                     Console.Write(("[" + current.Day.ToString(CultureInfo.CurrentCulture)).PadLeft(ColumnWidth));
-                    needToAddClosingBrace = true;
+                    isTomorrow = true;
                     Console.Write("]");
                 }
 
@@ -95,7 +109,15 @@ namespace Calendar
                     Console.WriteLine();
                 }
             }
+            Console.ForegroundColor = DefaultConsoleColor;
             Console.WriteLine();
+        }
+
+        private static ConsoleColor GetConsoleForegroundColorByDay(DateTime current)
+        {
+            const ConsoleColor defaultDayColor = ConsoleColor.White;
+            const ConsoleColor weekendDayColor = ConsoleColor.Green;
+            return current.DayOfWeek == DayOfWeek.Saturday || current.DayOfWeek == DayOfWeek.Sunday ? weekendDayColor : defaultDayColor;
         }
     }
 }
